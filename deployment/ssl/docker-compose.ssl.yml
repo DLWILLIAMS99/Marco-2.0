@@ -1,0 +1,61 @@
+# SSL/TLS Configuration for Marco 2.0
+# Automated certificate management and security
+
+version: '3.8'
+
+services:
+  certbot:
+    image: certbot/certbot:latest
+    container_name: marco2-certbot
+    volumes:
+      - ./ssl/certs:/etc/letsencrypt
+      - ./ssl/www:/var/www/certbot
+    command: >
+      certonly --webroot
+      --webroot-path=/var/www/certbot
+      --email admin@marco2.com
+      --agree-tos
+      --no-eff-email
+      --staging
+      -d marco2.com
+      -d www.marco2.com
+      -d api.marco2.com
+      -d ws.marco2.com
+    networks:
+      - marco2-network
+
+  nginx-ssl:
+    image: nginx:alpine
+    container_name: marco2-nginx-ssl
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl/certs:/etc/nginx/ssl:ro
+      - ./ssl/www:/var/www/certbot:ro
+      - ../build:/usr/share/nginx/html:ro
+    depends_on:
+      - certbot
+    networks:
+      - marco2-network
+    restart: unless-stopped
+
+  ssl-renewal:
+    image: certbot/certbot:latest
+    container_name: marco2-ssl-renewal
+    volumes:
+      - ./ssl/certs:/etc/letsencrypt
+      - ./ssl/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - marco2-network
+    restart: unless-stopped
+
+networks:
+  marco2-network:
+    driver: bridge
+
+volumes:
+  ssl-certs:
+  ssl-www:

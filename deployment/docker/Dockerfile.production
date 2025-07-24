@@ -1,0 +1,106 @@
+# Marco 2.0 Production Dockerfile
+# Multi-stage build for optimized WASM deployment
+# Target: <5MB bundle size, <2s load time
+
+# Stage 1: Rust WASM Build
+FROM rust:1.70-slim as wasm-builder
+
+# Install wasm-pack and required tools
+RUN rustup target add wasm32-unknown-unknown
+RUN cargo install wasm-pack
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy Rust source code
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src/
+COPY web/Cargo-web.toml ./web/
+
+# Build optimized WASM with size optimization
+WORKDIR /app/web
+RUN wasm-pack build --target web --release --out-dir pkg \
+    -- --features web-optimized \
+    -C opt-level=3 \
+    -C lto=fat \
+    -C codegen-units=1 \
+    -C panic=abort
+
+# Optimize WASM binary size
+RUN wasm-opt -Oz -o pkg/marco2_bg_optimized.wasm pkg/marco2_bg.wasm
+RUN mv pkg/marco2_bg_optimized.wasm pkg/marco2_bg.wasm
+
+# Stage 2: Node.js Build Environment
+FROM node:18-alpine as web-builder
+
+WORKDIR /app/web
+
+# Copy package files and install dependencies
+COPY web/package*.json ./
+RUN npm ci --only=production
+
+# Copy web source and WASM files from previous stage
+COPY web/src/ ./src/
+COPY web/public/ ./public/
+COPY web/index.html ./
+COPY web/vite.config.js ./
+COPY --from=wasm-builder /app/web/pkg ./pkg
+
+# Build optimized production bundle
+ENV NODE_ENV=production
+RUN npm run build
+
+# Stage 3: Production Nginx Server
+FROM nginx:1.24-alpine as production
+
+# Install brotli compression module
+RUN apk add --no-cache nginx-mod-http-brotli
+
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy optimized nginx configuration
+COPY deployment/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY deployment/nginx/mime.types /etc/nginx/mime.types
+
+# Copy built web application
+COPY --from=web-builder /app/web/dist /usr/share/nginx/html
+
+# Copy SSL certificates directory (to be mounted)
+RUN mkdir -p /etc/nginx/ssl
+
+# Create nginx user and set permissions
+RUN addgroup -g 101 -S nginx \
+    && adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx \
+    && chown -R nginx:nginx /usr/share/nginx/html \
+    && chown -R nginx:nginx /var/cache/nginx
+
+# Health check for container monitoring
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+# Security: Run as non-root user
+USER nginx
+
+# Expose ports
+EXPOSE 80 443
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+# Build metadata
+LABEL maintainer="Marco 2.0 Team"
+LABEL version="4.3.0"
+LABEL description="Marco 2.0 Visual Coding IDE - Production Container"
+LABEL org.opencontainers.image.title="Marco 2.0 Production"
+LABEL org.opencontainers.image.description="Optimized production deployment of Marco 2.0 Visual Coding IDE with WASM, WebRTC, and PWA capabilities"
+LABEL org.opencontainers.image.url="https://github.com/DLWILLIAMS99/Marco-2.0"
+LABEL org.opencontainers.image.source="https://github.com/DLWILLIAMS99/Marco-2.0"
+LABEL org.opencontainers.image.version="4.3.0"
+LABEL org.opencontainers.image.created="2025-07-24"
+LABEL org.opencontainers.image.revision="${GIT_COMMIT}"
+LABEL org.opencontainers.image.licenses="MIT"
