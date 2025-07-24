@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marco 2.0 - Sprint 3 Enhanced Features</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1e1e1e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Marco 2.0">
+    
+    <!-- Link to manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="src/styles/enhanced-sprint3.css">
+    
+    <style>
+        /* Inline critical styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #1e1e1e;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+        }
+        
+        .loading-logo {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .loading-text {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 30px;
+        }
+        
+        .loading-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .feature-demo-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid #555;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 500px;
+            backdrop-filter: blur(15px);
+            z-index: 1006;
+            color: white;
+            display: none;
+        }
+        
+        .feature-demo-panel h2 {
+            margin: 0 0 20px 0;
+            text-align: center;
+            color: #667eea;
+        }
+        
+        .feature-list {
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+        
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .feature-info {
+            flex: 1;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .feature-desc {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .close-demo-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-logo">Marco 2.0</div>
+        <div class="loading-text">Initializing Enhanced Features...</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loading-progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="marco2-enhanced-app" id="app-container" style="display: none;">
+        <!-- Canvas for Marco 2.0 -->
+        <canvas id="marco2-canvas" class="marco2-canvas"></canvas>
+        
+        <!-- Collaboration Panel (will be created dynamically) -->
+        
+        <!-- Voice Indicator (will be created dynamically) -->
+        
+        <!-- Gesture Indicator (will be created dynamically) -->
+        
+        <!-- Debug Panel (will be created dynamically) -->
+    </div>
+
+    <!-- Feature Demo Panel -->
+    <div class="feature-demo-panel" id="feature-demo-panel">
+        <h2>🚀 Sprint 3 Features</h2>
+        <p>Marco 2.0 now includes advanced collaboration, gesture recognition, and voice commands!</p>
+        
+        <div class="feature-list">
+            <div class="feature-item">
+                <div class="feature-icon">👥</div>
+                <div class="feature-info">
+                    <div class="feature-name">Real-time Collaboration</div>
+                    <div class="feature-desc">WebRTC peer-to-peer collaboration with operational transform</div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">👋</div>
+                <div class="feature-info">
+                    <div class="feature-name">Advanced Gestures</div>
+                    <div class="feature-desc">Multi-touch support with pinch, zoom, rotate, and custom gestures</div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🎤</div>
+                <div class="feature-info">
+                    <div class="feature-name">Voice Commands</div>
+                    <div class="feature-desc">Speech recognition for hands-free navigation and editing</div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-info">
+                    <div class="feature-name">Performance Optimization</div>
+                    <div class="feature-desc">Adaptive quality and real-time performance monitoring</div>
+                </div>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">📱</div>
+                <div class="feature-info">
+                    <div class="feature-name">Enhanced PWA</div>
+                    <div class="feature-desc">Offline support, background sync, and native app experience</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; border: 1px solid rgba(102, 126, 234, 0.3);">
+            <h4 style="margin: 0 0 10px 0; color: #667eea;">Quick Start:</h4>
+            <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #cccccc;">
+                <li><strong>Ctrl+C</strong> - Start collaboration session</li>
+                <li><strong>Ctrl+V</strong> - Toggle voice recognition</li>
+                <li><strong>Ctrl+D</strong> - Toggle debug panel</li>
+                <li><strong>Touch gestures</strong> - Tap, pinch, pan, rotate</li>
+                <li><strong>Voice commands</strong> - "zoom in", "create node", "save project"</li>
+            </ul>
+        </div>
+        
+        <button class="close-demo-btn" onclick="closeFeatureDemo()">Start Using Marco 2.0</button>
+    </div>
+
+    <!-- Context Menu (will be created dynamically) -->
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import Marco2EnhancedApp from './src/enhanced-app-sprint3.js';
+
+        // Global app instance
+        let app = null;
+        
+        // Loading simulation
+        function simulateLoading() {
+            const progressBar = document.getElementById('loading-progress-bar');
+            const loadingScreen = document.getElementById('loading-screen');
+            const appContainer = document.getElementById('app-container');
+            
+            let progress = 0;
+            const steps = [
+                { text: 'Loading core modules...', progress: 20 },
+                { text: 'Initializing WebRTC...', progress: 40 },
+                { text: 'Setting up voice recognition...', progress: 60 },
+                { text: 'Configuring gesture system...', progress: 80 },
+                { text: 'Starting enhanced features...', progress: 100 }
+            ];
+            
+            let currentStep = 0;
+            
+            function updateProgress() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    document.querySelector('.loading-text').textContent = step.text;
+                    progressBar.style.width = step.progress + '%';
+                    currentStep++;
+                    
+                    setTimeout(updateProgress, 800);
+                } else {
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        loadingScreen.style.transition = 'opacity 0.5s ease';
+                        
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            appContainer.style.display = 'block';
+                            showFeatureDemo();
+                            initializeApp();
+                        }, 500);
+                    }, 500);
+                }
+            }
+            
+            updateProgress();
+        }
+        
+        // Feature demo functions
+        function showFeatureDemo() {
+            document.getElementById('feature-demo-panel').style.display = 'block';
+        }
+        
+        window.closeFeatureDemo = function() {
+            document.getElementById('feature-demo-panel').style.display = 'none';
+        };
+        
+        // Initialize the enhanced app
+        async function initializeApp() {
+            try {
+                const canvas = document.getElementById('marco2-canvas');
+                
+                // Resize canvas to fill window
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                
+                // Initialize enhanced app with all features enabled
+                app = new Marco2EnhancedApp(canvas, {
+                    enableCollaboration: true,
+                    enableGestures: true,
+                    enableVoice: true,
+                    enablePerformanceOptimization: true,
+                    enableOfflineMode: true,
+                    enableDebugMode: false, // Can be toggled with Ctrl+D
+                    userName: 'Demo User',
+                    voiceLanguage: 'en-US',
+                    voiceConfidenceThreshold: 0.7,
+                    targetFPS: 60,
+                });
+                
+                // Wait for app to be ready
+                const checkReady = () => {
+                    if (app.isReady()) {
+                        console.log('Marco 2.0 Enhanced App is ready!');
+                        showNotification('Marco 2.0 Enhanced Features Loaded!', 'success');
+                        
+                        // Auto-enable collaboration panel after a delay
+                        setTimeout(() => {
+                            const collabPanel = document.getElementById('collaboration-panel');
+                            if (collabPanel) {
+                                collabPanel.classList.add('active');
+                            }
+                        }, 2000);
+                        
+                    } else {
+                        setTimeout(checkReady, 100);
+                    }
+                };
+                
+                checkReady();
+                
+            } catch (error) {
+                console.error('Failed to initialize Marco 2.0 Enhanced App:', error);
+                showNotification('Failed to initialize enhanced features', 'error');
+            }
+        }
+        
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Hide notification
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Demo drawing on canvas
+        function drawDemoContent(canvas) {
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+            
+            // Clear canvas
+            ctx.fillStyle = '#1e1e1e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw demo content
+            ctx.fillStyle = '#667eea';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Marco 2.0 Enhanced Features Demo', canvas.width / 2, 100);
+            
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '16px Arial';
+            ctx.fillText('Try gestures, voice commands, and collaboration!', canvas.width / 2, 140);
+            
+            // Draw some demo nodes
+            const nodes = [
+                { x: canvas.width * 0.3, y: canvas.height * 0.4, color: '#667eea' },
+                { x: canvas.width * 0.7, y: canvas.height * 0.4, color: '#764ba2' },
+                { x: canvas.width * 0.5, y: canvas.height * 0.6, color: '#00ff88' },
+            ];
+            
+            nodes.forEach((node, index) => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 30, 0, Math.PI * 2);
+                ctx.fillStyle = node.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Node ${index + 1}`, node.x, node.y + 5);
+            });
+            
+            // Draw connections
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.lineTo(nodes[1].x, nodes[1].y);
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.lineTo(nodes[2].x, nodes[2].y);
+            ctx.moveTo(nodes[1].x, nodes[1].y);
+            ctx.lineTo(nodes[2].x, nodes[2].y);
+            ctx.stroke();
+        }
+        
+        // Start the demo content drawing loop
+        function startDemoLoop() {
+            const canvas = document.getElementById('marco2-canvas');
+            function animate() {
+                drawDemoContent(canvas);
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+        
+        // Global error handling
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            showNotification('An error occurred. Check console for details.', 'error');
+        });
+        
+        // Start loading simulation
+        simulateLoading();
+        
+        // Start demo content loop after a delay
+        setTimeout(startDemoLoop, 3000);
+        
+        // Expose app for debugging
+        window.marco2App = app;
+    </script>
+</body>
+</html>

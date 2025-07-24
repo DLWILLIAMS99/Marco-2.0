@@ -1,0 +1,170 @@
+/*!
+DEV_GUIDELINES – Developer Conventions for Marco 2.0
+
+Architectural standards and best practices for contributing clean, modular, and scalable systems within the Marco 2.0 codebase.
+
+---
+
+📁 Module Structure
+
+Recommended layout for core systems:
+
+core/types         → foundational types like DotPath, MetaValue, ScopeId  
+core/registry      → MetaRegistry, path resolution, scoped access  
+core/logic         → NodeInputBinding, BindingExpr, Evaluatable  
+core/events        → hooks and subscription system  
+core/time          → frame/tick delta engine  
+graph/runtime      → logic graph execution per scope  
+graph/scope        → subgraph management, isolation, rebinds  
+devtools/debug     → signal overlays, inspector, registry diff  
+project/template   → .fragment.json import/export  
+project/loader     → autosave, snapshot, crash recovery  
+assets/            → font/image/tag metadata (optional)  
+marco_cli/         → project tools, diffing, export  
+
+---
+
+📐 Typing & Path Rules
+
+- DotPath must be used for all registry references  
+- Registry access must go through `.get_scoped()`  
+- Avoid raw strings or `&str` when addressing data paths  
+- MetaValue is the only allowed payload in registry or graph values  
+- Expose logic types (BindingExpr, Evaluatable, etc.) via traits in `core/`
+
+---
+
+🧱 Metadata & Snapshot Contracts
+
+- All registry snapshot data must be hash-compressed:  
+  HashKey → MetaValue
+
+- Store snapshots immutably and compare via diffs (added, changed, removed)  
+- Do not embed DotPath in snapshot files—track separately via `.metamap.json`  
+- Snapshot files must be JSON or CBOR and include a checksum
+
+---
+
+⚙️ Logic Node Standards
+
+Nodes must implement:
+
+impl Evaluatable for MyNode {
+    fn evaluate(&self, inputs, _ctx) -> HashMap<String, MetaValue> {
+        // safe, stateless, no unwraps unless unreachable
+    }
+}
+
+- Never panic or unwrap inside graph logic  
+- All inputs should resolve upstream via NodeInputBinding  
+- Nodes must return flat maps with string output keys
+
+---
+
+🧮 Expression & Binding System
+
+NodeInputBinding variants:
+
+Literal(MetaValue)  
+Path(DotPath)  
+Expression(BindingExpr)
+
+BindingExpr supports:  
+- Const  
+- Ref  
+- Binary  
+- Unary  
+- IfElse  
+- (optional) Call
+
+Always use Box to safely nest expression trees.  
+BindingExpr must be evaluated in a statically typed context.
+
+---
+
+🧩 Templates & Composition
+
+.fragment.json files must include:  
+- metadata: template_id, version  
+- inputs: label, binding, type, default_value  
+- outputs: target registry paths  
+- composition: declared slot map or merge-down map  
+
+All bindings in templates must use BindingExpr format, even for literals or paths.
+
+During merge-down:  
+- rebase all internal paths  
+- rewire registry dependencies  
+- preserve exposed inputs/outputs in resolved scope
+
+---
+
+🔧 Devtools Expectations
+
+All devtools overlays must:  
+- be opt-in via hotkey or debug flag  
+- never affect export or logic flow  
+- display registry state with path, value, type  
+- highlight deltas since last frame  
+- support time-travel or playback when temporal data is active
+
+Inspector panels must display:  
+- raw value  
+- scope source  
+- binding resolution trace (if applicable)  
+- optional context links (docs, origin node)
+
+---
+
+📦 CLI & Plugin Interface
+
+CLI commands should be routed through marco_cli::commands  
+Plugins must register using PluginRegistrar pattern  
+No plugin may mutate global state directly  
+All plugin I/O must be gated behind `.feature("plugins")` or sandboxed  
+
+AI-generated assets, remote mounts, and authentication features must be optional via build flags.
+
+---
+
+✅ Code Quality & Practices
+
+- Derive at minimum: Debug, Clone, Serialize, Deserialize  
+- Prefer non-panicking paths and contextual errors  
+- Use tracing macros for logs: `tracing::info!()`, `warn!()`, etc.  
+- All modules should include mod.rs with high-level doc comment  
+- Keep side effects out of evaluation logic  
+- Avoid global statics unless using safe lazy initializers
+
+---
+
+🧪 Testing
+
+All logic nodes and registry changes must:  
+- be testable in isolation via mock MetaRegistry  
+- support snapshotting and round-trip comparison  
+- avoid side-channel dependencies (e.g. UI state)
+
+---
+
+🛡 Feature Flags
+
+Feature flags used in Cargo.toml:
+
+"remote_mounts"    → enables serial/ws adapters  
+"devtools"         → inspector + tracer tools  
+"ai_tools"         → prompt-based asset generation  
+"auth"             → SSO or token-based user login  
+"plugin_support"   → external plugin and loader trait APIs
+
+---
+
+📚 Related Docs
+
+See also:
+- COPILOT_COMMENTS.md → prompt cues for AI agents
+- README.md → architecture and system overview
+- project/template/schema.json → expected format for .fragment.json templates
+
+---
+*/

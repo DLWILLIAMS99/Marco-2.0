@@ -1,0 +1,156 @@
+# Marco 2.0 – Design & Architecture Proposal
+
+_A modern, modular, and scalable visual coding IDE built for creative professionals, powered by scoped logic, structured metadata, and real-time introspection._
+
+---
+
+## 📘 Table of Contents
+
+1. [Executive Summary](#1-executive-summary)  
+2. [Guiding Principles](#2-guiding-principles)  
+3. [Core Architecture](#3-core-architecture)  
+4. [Metadata Registry System](#4-metadata-registry-system)  
+5. [Scaffolding & Core Modules](#5-scaffolding--core-modules)  
+6. [Runtime Execution Model](#6-runtime-execution-model)  
+7. [Bindings & Expressions](#7-bindings--expressions)  
+8. [Snapshot System & Deltas](#8-snapshot-system--deltas)  
+9. [Developer Tools & Debugging](#9-developer-tools--debugging)  
+10. [Template System & Composition](#10-template-system--composition)  
+11. [Persistence & Project Management](#11-persistence--project-management)  
+12. [Remote Integration & Mounts](#12-remote-integration--mounts)  
+13. [CLI, Assets & AI Tooling](#13-cli-assets--ai-tooling)  
+14. [Contribution & Governance](#14-contribution--governance)  
+15. [Appendices](#15-appendices)
+
+---
+
+## 1. Executive Summary
+
+Marco 2.0 is a complete redesign of the Marco visual IDE, focused on robust metadata tracking, visual composability, and real-time debugging. It empowers creators and developers alike with strong architectural clarity and dynamic extensibility.
+
+---
+
+## 2. Guiding Principles
+
+- **Security, Simplicity, Stability**
+- **Visual Nesting Reflects Logic**
+- **Scoped, Reflective Metadata Registries**
+- **Composable & Mergeable Systems**
+- **Declarative & Introspective by Default**
+
+---
+
+## 3. Core Architecture
+
+- Modular Rust crate layout (`core/`, `graph/`, `ui/`, `project/`, etc.)
+- DotPath namespacing with compressed hash maps
+- Multi-scope project layout with sandboxed logic and metadata
+
+---
+
+## 4. Metadata Registry System
+
+- `MetaRegistry` with typed `MetaValue`s
+- Dot-path navigation and scoped lookup
+- Hash-compression via `.metamap.json`
+- ✨ Listener counts, diff tracking, scope access control
+
+---
+
+## 5. Scaffolding & Core Modules
+
+- `core/types`, `core/registry`, `core/logic`, `core/time`, `core/events`
+- `render/text`, `ui/layout`, and `graph/runtime` systems
+- ✨ `render.text` supports smart font layout and segmentation
+
+---
+
+## 6. Runtime Execution Model
+
+- `graph.runtime`: Evaluatable nodes + tick engine
+- Scoped logic graphs (subgraph per object/canvas)
+- Visual path rewiring across scopes
+- Registry diffs per frame enable precise undo
+
+---
+
+## 7. Bindings & Expressions
+
+- `NodeInputBinding`: literal, path, or `BindingExpr`
+- `BindingExpr`: structured AST for logic, math, conditionals
+- ✨ Visual expression trees and param rebind inspector
+
+---
+
+## 8. Snapshot System & Deltas
+
+- Compressed snapshots with `HashKey → MetaValue`
+- Frame delta comparison engine
+- Autosave, corruption recovery, and integrity checking
+- Plugin-ready snapshot diff visualizer
+
+---
+
+## 9. Developer Tools & Debugging
+
+- `devtools.debug`: signal overlays, HUD, dev console
+- ✨ Cargo-aware linter with visual warnings (unused vars, naming collisions, unresolved crates)
+- ✨ Scope viewer and key inspector with change history
+- ✨ Live event hooks panel and signal propagation tracing
+
+---
+
+## 10. Template System & Composition
+
+- `.template.fragment.json` format
+- ✨ Template Inspector: drag-to-bind wiring
+- ✨ Merge-Down: editable templates once flattened
+- Template reusability via path wiring and output aliasing
+
+---
+
+## 11. Persistence & Project Management
+
+- Project versioning with scoped loaders
+- ✨ Dependency version checker (Rust crates or template libs)
+- Delta-aware snapshot persistence
+- Save policies: autosave, versioned snapshots, and crash recovery
+
+---
+
+## 12. Remote Integration & Mounts
+
+- Registry bridges via adapters (e.g. WebSocket or serial)
+- ✨ Mount policies, trust isolation, dynamic debug flags
+- ✨ Remote registry diff tracing and patch injection
+
+---
+
+## 13. CLI, Assets & AI Tooling
+
+- `marco_cli` for snapshots, diffs, debug export
+- ✨ Integrated Asset Browser with font/image/tag import
+- ✨ AI-assisted sprite/tilemap/code generation panel
+- ✨ SSO-ready authentication bridge for external services (Copilot, etc.)
+
+---
+
+## 14. Contribution & Governance
+
+- Modular architecture and plugin trait hooks
+- Naming consistency, linting, and format policy
+- CI/CD hooks for validator tests
+- Community template schema & version compatibility
+
+---
+
+## 15. Appendices
+
+- Sample `BindingExpr` and snapshot exports
+- Path lookup diagram + registry tree browser mockups
+- Slide/frame navigation model
+- Devtools signal overlay key
+
+---
+
+Marco 2.0 is your logic lens, design brush, and runtime reflection tool—all in one. Sculpt your ideas. Inspect your changes. Reuse your brilliance. This isn’t just creative tooling—it’s creative infrastructure.

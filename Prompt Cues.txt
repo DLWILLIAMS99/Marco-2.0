@@ -1,0 +1,145 @@
+/*!
+COPILOT_COMMENTS – Prompt Cues for Marco 2.0
+
+Structured guidance for GitHub Copilot in VS Code, written as inline documentation.
+
+---
+
+🧱 Core Types & Traits
+
+When defining a metadata value:
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum MetaValue {
+    Scalar(f64),
+    Bool(bool),
+    String(String),
+    Color(ColorRGBA),
+    List(Vec<MetaValue>),
+    Object(HashMap<String, MetaValue>),
+}
+
+- Always use MetaValue::Scalar for numbers inside logic.
+- Avoid primitive types outside MetaValue in graph logic.
+
+---
+
+🗂 Registry Rules
+
+Always access data using scoped dot paths:
+
+registry.get_scoped(&DotPath::from("canvas.slider.value"))
+
+- Never hardcode plain strings like "foo.bar.baz".
+- Do not modify other scopes directly.
+
+---
+
+⚙️ Logic Nodes
+
+Each logic node should implement Evaluatable:
+
+impl Evaluatable for AddNode {
+    fn evaluate(&self, inputs, _ctx) -> HashMap<String, MetaValue> {
+        let a = inputs.get("a").and_then(|v| v.as_scalar()).unwrap_or(0.0);
+        let b = inputs.get("b").and_then(|v| v.as_scalar()).unwrap_or(0.0);
+        hashmap! { "sum".into() => MetaValue::Scalar(a + b) }
+    }
+}
+
+- Do not panic or unwrap unsafely.
+- Always return a flat map of output bindings.
+
+---
+
+🎛 NodeInputBinding Variants
+
+NodeInputBinding::Literal(MetaValue::Bool(true))
+NodeInputBinding::Path(DotPath::from("canvas.toggle.active"))
+NodeInputBinding::Expression(BindingExpr::Binary(...))
+
+- Do not resolve input early—defer to evaluator context.
+
+---
+
+🧮 BindingExpr (Expression AST)
+
+Create nested expressions like this:
+
+BindingExpr::Binary(
+    BinaryOp::Greater,
+    Box::new(BindingExpr::Ref(DotPath::from("a"))),
+    Box::new(BindingExpr::Const(MetaValue::Scalar(0.5))),
+)
+
+- Always use Box for inner expressions.
+- Avoid implicit coercion—types must resolve safely.
+
+---
+
+🧪 Snapshots
+
+Use hash compression for registry state:
+
+CompressedSnapshot {
+    entries: HashMap<HashKey, MetaValue>,
+    hash_signature: String,
+}
+
+- Do not store DotPath in snapshots—use HashKey mapping.
+- Compare diffs using added / removed / changed.
+
+---
+
+🧩 Templates
+
+Template inputs follow this format:
+
+{
+  "binding": {
+    "type": "Expression",
+    "expr": {
+      "type": "Ref",
+      "path": "canvas.slider.value"
+    }
+  },
+  "label": "Opacity Control",
+  "default_value": 0.5,
+  "type": "scalar",
+  "range": [0.0, 1.0]
+}
+
+- All exported inputs must include label, type, default_value.
+- Do not assume the presence of logic—resolve paths explicitly.
+
+---
+
+🔍 Devtools Conventions
+
+- Add hotkey toggles for every debug panel (e.g., Ctrl+D).
+- Highlight changes:
+  Blue → added
+  Red → removed
+  Yellow → modified
+- Use signal tracers to show evaluation order.
+
+---
+
+🛡 Code Safety Rules
+
+- All structs derive: Debug, Clone, Serialize, Deserialize
+- Avoid .unwrap() except when guarded or unreachable.
+- Never expose untyped registry values to logic or UI.
+
+---
+
+🧠 Copilot Prompting Hints
+
+- Write traits before implementing logic blocks.
+- Use inline doc comments (///) to describe intent.
+- Prefer declarative composition and readable structure.
+- Add inline comments like:
+// Copilot: use MetaValue::Scalar when binding `opacity`
+
+---
+*/

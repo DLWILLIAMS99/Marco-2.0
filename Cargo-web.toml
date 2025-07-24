@@ -1,0 +1,90 @@
+[package]
+name = "marco-2-web"
+version = "0.1.0"
+edition = "2021"
+description = "Marco 2.0 Web Assembly Package"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Core Marco 2.0 dependencies (assuming they exist)
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+wee_alloc = "0.4"
+console_error_panic_hook = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+
+# Web-specific dependencies
+web-sys = { version = "0.3", features = [
+  "console",
+  "Window",
+  "Document",
+  "Element",
+  "HtmlCanvasElement",
+  "WebGlRenderingContext",
+  "WebGl2RenderingContext",
+  "CanvasRenderingContext2d",
+  "ImageData",
+  "TouchEvent",
+  "TouchList",
+  "Touch",
+  "PointerEvent",
+  "MouseEvent",
+  "KeyboardEvent",
+  "Event",
+  "EventTarget",
+  "Performance",
+  "DomRect",
+  "Navigator",
+  "Screen",
+  "History",
+  "Location",
+  "Storage",
+  "CssStyleDeclaration",
+  "RequestAnimationFrameCallback",
+] }
+
+# Graphics and rendering
+wgpu = { version = "0.18", features = ["webgl"] }
+winit = { version = "0.29", features = ["web-sys"] }
+glam = { version = "0.24", features = ["serde"] }
+
+# Async and futures
+wasm-bindgen-futures = "0.4"
+futures = "0.3"
+
+# Logging and debugging
+tracing = "0.1"
+tracing-wasm = "0.2"
+
+# Optional features for performance
+[dependencies.getrandom]
+version = "0.2"
+features = ["js"]
+
+[profile.release]
+opt-level = "s"         # Optimize for size
+lto = true             # Link-time optimization  
+codegen-units = 1      # Single codegen unit for better optimization
+panic = "abort"        # Reduce binary size
+debug = false          # No debug symbols
+strip = true           # Strip symbols
+
+[profile.dev]
+opt-level = 0
+debug = true
+panic = "unwind"
+
+# WASM-specific optimizations
+[profile.release.package."*"]
+opt-level = "s"
+
+# Features for conditional compilation
+[features]
+default = ["console_error_panic_hook"]
+debug = ["console_error_panic_hook", "tracing-wasm"]
+performance = []
+mobile-optimized = []

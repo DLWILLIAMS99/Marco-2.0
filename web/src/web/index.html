@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Marco 2.0">
+  
+  <title>Marco 2.0 - Visual IDE</title>
+  <meta name="description" content="Marco 2.0 Visual Programming IDE - Create interactive applications with visual nodes and touch-friendly interface">
+  
+  <!-- PWA Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="mask-icon" href="/assets/icons/safari-pinned-tab.svg" color="#2563eb">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/pkg/marco_2_web.wasm" as="fetch" type="application/wasm" crossorigin="">
+  
+  <!-- OpenGraph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Marco 2.0 - Visual IDE">
+  <meta property="og:description" content="Create interactive applications with visual programming">
+  <meta property="og:image" content="/assets/og-image.png">
+  <meta property="og:url" content="https://marco-2.app">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Marco 2.0 - Visual IDE">
+  <meta name="twitter:description" content="Create interactive applications with visual programming">
+  <meta name="twitter:image" content="/assets/twitter-image.png">
+</head>
+<body>
+  <div id="app">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading Marco 2.0...</div>
+    </div>
+    
+    <!-- Main Canvas Container -->
+    <div class="canvas-container">
+      <canvas id="marco2-canvas" width="800" height="600">
+        Your browser does not support HTML5 Canvas.
+        Please update to a modern browser to use Marco 2.0.
+      </canvas>
+    </div>
+    
+    <!-- Error Display (hidden by default) -->
+    <div id="error-overlay" class="error-overlay" style="display: none;">
+      <div class="error-dialog">
+        <h3>Unable to Load Marco 2.0</h3>
+        <p id="error-message">An error occurred while loading the application.</p>
+        <button onclick="window.location.reload()">Retry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Global error handling
+    window.addEventListener('error', function(event) {
+      console.error('Global error:', event.error);
+      showError('An unexpected error occurred: ' + event.error.message);
+    });
+
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled promise rejection:', event.reason);
+      showError('Failed to load application: ' + event.reason);
+    });
+
+    function showError(message) {
+      const loadingScreen = document.getElementById('loading-screen');
+      const errorOverlay = document.getElementById('error-overlay');
+      const errorMessage = document.getElementById('error-message');
+      
+      if (loadingScreen) loadingScreen.style.display = 'none';
+      if (errorOverlay) errorOverlay.style.display = 'flex';
+      if (errorMessage) errorMessage.textContent = message;
+    }
+
+    function hideLoading() {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+      }
+    }
+
+    // Browser compatibility check
+    function checkCompatibility() {
+      const features = {
+        webassembly: typeof WebAssembly === 'object',
+        canvas: typeof HTMLCanvasElement !== 'undefined',
+        touchEvents: 'ontouchstart' in window,
+        pointerEvents: 'onpointerdown' in window,
+        serviceWorker: 'serviceWorker' in navigator,
+      };
+
+      console.log('Browser features:', features);
+
+      if (!features.webassembly) {
+        showError('Your browser does not support WebAssembly. Please update to a modern browser.');
+        return false;
+      }
+
+      if (!features.canvas) {
+        showError('Your browser does not support HTML5 Canvas. Please update to a modern browser.');
+        return false;
+      }
+
+      return true;
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!checkCompatibility()) {
+        return;
+      }
+
+      // The main app will be loaded by webpack
+      console.log('Marco 2.0 Web - Initializing...');
+    });
+
+    // PWA install prompt handling
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Show install button or banner
+      console.log('PWA install prompt ready');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      console.log('PWA installed successfully');
+    });
+
+    // Performance monitoring
+    if ('performance' in window && 'measure' in window.performance) {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const perfData = performance.timing;
+          const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+          console.log('Page load time:', pageLoadTime + 'ms');
+        }, 0);
+      });
+    }
+  </script>
+</body>
+</html>

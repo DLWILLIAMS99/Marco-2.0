@@ -1,0 +1,104 @@
+[package]
+name = "marco2"
+version = "0.1.0"
+edition = "2021"
+authors = ["Marco 2.0 Team"]
+description = "A modern, modular visual coding IDE built for creative professionals"
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "marco2"
+path = "src/main.rs"
+
+[[bin]]
+name = "marco2-desktop"
+path = "src/main_desktop.rs"
+
+[[bin]]
+name = "marco2-web"
+path = "src/main_web.rs"
+required-features = []
+
+[[bin]]
+name = "marco2-phase3-demo"
+path = "src/main_phase3_demo.rs"
+
+[[bin]]
+name = "marco2-phase3-simple"
+path = "src/main_phase3_simple_demo.rs"
+
+[[bin]]
+name = "marco2-phase3-standalone"
+path = "src/main_phase3_standalone.rs"
+
+[[bin]]
+name = "marco2-phase3-minimal"
+path = "src/main_phase3_simple.rs"
+
+[[bin]]
+name = "marco2-phase3-working"
+path = "src/main_phase3_working.rs"
+
+[features]
+default = ["devtools"]
+remote_mounts = ["tokio", "tokio-tungstenite"]
+devtools = []
+ai_tools = []
+plugin_support = []
+
+[dependencies]
+# Core dependencies (preserved from original architecture)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "1.0"
+anyhow = "1.0"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Collections and utilities
+indexmap = { version = "2.0", features = ["serde"] }
+dashmap = "5.5"
+
+# WGPU rendering stack - modern graphics foundation
+wgpu = { version = "0.19", features = ["wgsl"] }
+winit = "0.29"
+pollster = "0.3"
+bytemuck = { version = "1.14", features = ["derive"] }
+glam = { version = "0.25", features = ["serde"] }  # Math library for 3D transforms and advanced graphics
+
+# WGPU utilities
+wgpu-hal = "0.19"
+wgpu-types = "0.19"
+
+# Advanced text rendering for professional typography
+cosmic-text = "0.10"  # Modern text shaping and layout engine
+fontdue = "0.8"       # High-performance font rasterization
+
+# Image processing and asset loading
+image = "0.24"
+
+# Cross-platform file operations
+rfd = "0.14"  # File dialogs
+
+# Additional utilities
+dirs = "5.0"  # Cross-platform directory access
+env_logger = "0.10"  # Logging initialization
+
+# GUI Framework for demonstrations
+eframe = "0.25"  # egui native framework
+egui = "0.25"    # Immediate mode GUI library
+
+# Optional dependencies for features
+tokio = { version = "1.0", features = ["full"], optional = true }
+tokio-tungstenite = { version = "0.20", optional = true }
+
+# Platform-specific dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+web-sys = "0.3"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+console_log = "1.0"
+log = "0.4"

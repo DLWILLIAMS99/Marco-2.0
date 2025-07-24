@@ -1,0 +1,79 @@
+{
+  "name": "marco-2-web",
+  "version": "0.1.0",
+  "description": "Marco 2.0 Visual IDE - Web Assembly Edition",
+  "main": "pkg/marco_2_web.js",
+  "types": "pkg/marco_2_web.d.ts",
+  "files": [
+    "pkg/*",
+    "dist/*",
+    "src/*"
+  ],
+  "scripts": {
+    "build": "npm run build:wasm && npm run build:web",
+    "build:wasm": "wasm-pack build --target web --out-dir pkg --features console_error_panic_hook",
+    "build:wasm:release": "wasm-pack build --target web --out-dir pkg --release --features console_error_panic_hook",
+    "build:web": "webpack --mode development",
+    "build:web:release": "webpack --mode production",
+    "dev": "npm run build:wasm && webpack serve --mode development",
+    "serve": "http-server dist -p 8080 -c-1",
+    "test": "wasm-pack test --chrome --headless",
+    "clean": "rimraf pkg dist",
+    "lint": "eslint src/web/**/*.ts",
+    "format": "prettier --write src/web/**/*.{ts,js,html,css}",
+    "analyze": "webpack-bundle-analyzer dist/stats.json"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "eslint": "^8.50.0",
+    "html-webpack-plugin": "^5.5.3",
+    "http-server": "^14.1.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.2.2",
+    "webpack": "^5.88.2",
+    "webpack-bundle-analyzer": "^4.9.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "workbox-webpack-plugin": "^7.0.0"
+  },
+  "dependencies": {
+    "comlink": "^4.4.1"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "> 1%",
+    "not dead"
+  ],
+  "keywords": [
+    "visual-programming",
+    "node-editor",
+    "wasm",
+    "rust",
+    "webassembly",
+    "touch",
+    "mobile",
+    "responsive",
+    "ide"
+  ],
+  "author": "Marco 2.0 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marco-2/marco-2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marco-2/marco-2/issues"
+  },
+  "homepage": "https://marco-2.github.io"
+}
