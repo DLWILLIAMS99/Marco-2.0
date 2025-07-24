@@ -425,6 +425,38 @@ export class CrashReporter {
     }
   }
 
+  public reportCustomError(errorInfo: {
+    type: CrashReport['type'];
+    message: string;
+    stack?: string;
+    severity?: CrashReport['severity'];
+    context?: Partial<CrashReport['context']>;
+  }): void {
+    const crashReport: CrashReport = {
+      id: this.generateCrashId(),
+      timestamp: Date.now(),
+      sessionId: this.sessionId,
+      userId: this.userId,
+      type: errorInfo.type,
+      severity: errorInfo.severity || 'medium',
+      message: errorInfo.message,
+      stack: errorInfo.stack,
+      context: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight
+        },
+        lastActions: [...this.lastActions],
+        ...errorInfo.context
+      },
+      systemInfo: this.getSystemInfo()
+    };
+
+    this.processCrashReport(crashReport);
+  }
+
   public getReports(): CrashReport[] {
     return [...this.reports];
   }
